@@ -36,11 +36,7 @@ ThirdPlot <- plot(rf3)
 ```{r}
 pred = predict(rf, newdata=TEST)
 
-
-
-
-
-#rfcv(rf, TRAIN)
+rfcv(rf, TRAIN)
 
 
 #'pred' itself just has the outputs AKA our predictions.
@@ -52,13 +48,11 @@ TEST$Pred <- round(pred)
 
 sqrt(rf$mse[which.min(rf$mse)])
 
-
 cm = table(TEST$Spread, TEST$Pred)
 
 Classification_Accuracy <- sum(diag(cm)) / sum(cm)
 Classification_Accuracy
 ```
-
 
 
 ```{r}
@@ -67,3 +61,4 @@ Same <- filter(TEST, Spread == Pred)
 Different <- filter(TEST, Spread != Pred)
 
 nrow(Same)/nrow(TEST)
+```
