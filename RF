@@ -1,0 +1,69 @@
+
+```{r}
+library(curl)
+library(tidyverse)
+library(randomForest)
+library(caTools)
+```
+
+```{r}
+
+DATA3 <- read.csv("final_data.csv")
+```
+
+```{r}
+head(DATA)
+
+DATA3 <- DATA3 %>%
+  select(-Game_Date,-Season,-X,-Points_Home,-Points_Away,-Home_Advantage,-OReb_Home,-OReb_Away,-Spread,-OReb, Total)
+
+##Remove Rows with NA
+FINAL_DATA = na.omit(DATA3)
+#splitting data into train and test
+set.seed(101)
+sample = sample.int(n = nrow(FINAL_DATA), size = floor(.8*nrow(FINAL_DATA)), replace = F)
+TRAIN = FINAL_DATA[sample, ]
+TEST = FINAL_DATA[-sample, ]
+```
+```{r}
+
+rf3 <- randomForest(Total ~ .,data=TRAIN, importance = TRUE)
+
+ThirdPlot <- plot(rf3)
+
+```
+
+```{r}
+pred = predict(rf, newdata=TEST)
+
+
+
+
+
+#rfcv(rf, TRAIN)
+
+
+#'pred' itself just has the outputs AKA our predictions.
+# To test whether they are good or not, we will do:
+#pred <- t(pred)
+
+#TEST$Pred <- round(pred)
+TEST$Pred <- round(pred)
+
+sqrt(rf$mse[which.min(rf$mse)])
+
+
+cm = table(TEST$Spread, TEST$Pred)
+
+Classification_Accuracy <- sum(diag(cm)) / sum(cm)
+Classification_Accuracy
+```
+
+
+
+```{r}
+
+Same <- filter(TEST, Spread == Pred)
+Different <- filter(TEST, Spread != Pred)
+
+nrow(Same)/nrow(TEST)
